@@ -60,7 +60,7 @@
 					<div style="flex:1">
 						<p class="quantity">{{item.quantity}}</p>
 						<div class="quantity">
-							<img data-product="{{item.product.id}}" data-action="add" class="chg-quantity update-cart" src="{% static  'images/arrow-up.png' %}">
+							<!-- <img data-product="{{item.product.id}}" data-action="add" class="chg-quantity update-cart" src="{% static  'images/arrow-up.png' %}"> -->
 					
 							<img data-product="{{item.product.id}}" data-action="remove" class="chg-quantity update-cart" src="{% static  'images/arrow-down.png' %}">
 						</div>
@@ -73,6 +73,6 @@
 	</div>
 </body>
 </html>
-	<script  src="{%static 'js/carts.js'%}"></script>
+	<script  src="{%static 'js/cart.js'%}"></script>
 
 {% endblock content %}

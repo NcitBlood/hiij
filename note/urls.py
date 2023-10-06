@@ -20,7 +20,9 @@ urlpatterns = [
     path('esewarequest/',views.esewa_request_view,name='esewarequest'),
     path('process_order/',views.processOrder,name="process_order"),
     path('my_profile/',views.my_profile,name="my_profile"),
+    path('adminonly/',views.admin_button_view,name="adminonly"),
     path('customerorderdetail/<str:pk>',views.CustomerOrderDetail,name="customerorderdetail"),
+    path('admin_orderitem/<str:pk>',views.admin_order_Item,name="admin_orderitem"),
     path('topics/',views.topics_page,name="topics")
 
       

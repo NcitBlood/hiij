@@ -53,12 +53,15 @@
                         <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
                     </svg>
                 </button>
+                {% if user.is_superuser %}
+                <a href="{%url 'adminonly' %}" class="btn btn-danger">Admin Button</a>
+            {% else %}
                 <div class="form-inline my-2 my-lg-0">   
                     <a href="{% url 'cart' %}">
                        <img  id="cart-icon" src="{% static 'images/cart.png' %}">
                    </a>
                    <p id="cart-total">{{cart_Items}}</p>
-       
+            {% endif %}
                </div>
             </div>
             {% else %}

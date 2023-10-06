@@ -8,7 +8,7 @@ class Customer(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(max_length=200)
-    avatar = models.ImageField(null=True, default="avatar.svg",upload_to= 'static/images')
+    avatar = models.ImageField(null=True, default="a3.jfif",upload_to= 'static/images')
 
 
     def __str__(self):
@@ -86,9 +86,11 @@ class Order(models.Model):
         shipping = False
         orderitems = self.orderitem_set.all() # type: ignore
         for i in orderitems:
-            if i.product.digital == False:
+            product = i.product
+            if product and not product.digital:
                 shipping = True
         return shipping
+
 
     @property
     def get_cart_total(self):

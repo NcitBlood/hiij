@@ -13,8 +13,39 @@ from .models import *
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import  User
 from .forms import MyUserCreationForm, NoteForm, UserForm
+from django.contrib.admin.views.decorators import user_passes_test # type: ignore
+
 
 # Create your views here.
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
+def admin_button_view(request):
+    orders = Order.objects.filter(complete=True).order_by('-date_ordered')
+
+    context={'orders':orders}
+    return render(request, 'adminonly.html',context)
+
+
+def admin_order_Item(request,pk):
+    # Get the specific order based on the provided pk
+    order = Order.objects.get(id=pk)
+    items = order.orderitem_set.all()  # type: ignore
+    customer=order.customer
+    shipping=ShippingAddress.objects.filter(customer=customer).last()
+    cart_items = order.get_cart_items
+        
+
+    context = {
+        'customer':customer,
+        'order': order,
+        'shipping':shipping,
+        'items':items,
+        'cart_items': cart_items,
+
+    }
+
+    return render(request,'admin_order_item.html',context)
+
 def index(request):
 
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -235,6 +266,7 @@ def checkout(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all() # type: ignore
+        
         cart_Items = order.get_cart_items
     else:
         items = []
@@ -260,6 +292,8 @@ def checkout(request):
         'payment_options': payment_options,  # Pass payment options to the template
         'order_status': order_status
     }
+   
+ 
     return render(request, 'checkout.html', context)
 
 
@@ -346,7 +380,10 @@ def updateItem(request):
 
     if action == 'add':
     # Increase the quantity by 1 for adding an item to the cart
-        quantity = 1
+        quantity = +1
+
+    
+    
     elif action == 'remove':
     # Decrease the quantity by 1 for removing an item from the cart
         quantity = -1
@@ -361,6 +398,9 @@ def updateItem(request):
         orderItem.save()
 
 # Additional logic to remove the OrderItem if the quantity becomes zero or less
+    # if orderItem.quantity >=10:
+
+
     if orderItem.quantity <= 0:
         orderItem.delete()
 
@@ -380,6 +420,13 @@ def processOrder(request):
         if total == order.get_cart_total:
             order.complete = True
         order.save()
+        
+        # if order.complete:
+        #     for item in order.orderitem_set.all(): # type: ignore
+        #         # Assuming each order item corresponds to a room
+        #         room_to_delete = item.product
+        #         room_to_delete.delete()
+              
 
         if order.shipping == True:
             ShippingAddress.objects.create(
@@ -400,6 +447,8 @@ def processOrder(request):
         print("User must logged in")
 
     print('Data:',request.body)
+
+    
 
     return JsonResponse("Payment done",safe=False)
 
